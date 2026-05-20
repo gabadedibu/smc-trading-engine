@@ -5,6 +5,7 @@ import { Candle } from '../types';
 import { generateSignal } from '../engine/signalGenerator';
 
 const sampleCandles = (): Candle[] => {
+  const SECONDS_PER_MINUTE = 60;
   const candles: Candle[] = [];
   let base = 100;
   for (let i = 0; i < 150; i += 1) {
@@ -13,7 +14,14 @@ const sampleCandles = (): Candle[] => {
     const close = base + drift;
     const high = Math.max(open, close) + Math.random() * 0.7;
     const low = Math.min(open, close) - Math.random() * 0.7;
-    candles.push({ time: Math.floor(Date.now() / 1000) - (150 - i) * 60, open, high, low, close, volume: 100 + Math.random() * 100 });
+    candles.push({
+      time: Math.floor(Date.now() / 1000) - (150 - i) * SECONDS_PER_MINUTE,
+      open,
+      high,
+      low,
+      close,
+      volume: 100 + Math.random() * 100
+    });
     base = close;
   }
   return candles;

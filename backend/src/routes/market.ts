@@ -26,11 +26,18 @@ const generateCandles = (symbol: string): Candle[] => {
 
 export const marketRouter = Router();
 
+const queryString = (value: unknown, fallback: string): string => {
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value) && typeof value[0] === 'string') return value[0];
+  return fallback;
+};
+
 marketRouter.get('/symbols', (_req, res) => {
   res.json(symbols);
 });
 
 marketRouter.get('/candles', (req, res) => {
-  const { symbol = 'BTCUSDT', timeframe = '1h' } = req.query as { symbol?: string; timeframe?: string };
+  const symbol = queryString(req.query.symbol, 'BTCUSDT');
+  const timeframe = queryString(req.query.timeframe, '1h');
   res.json({ symbol, timeframe, candles: generateCandles(symbol) });
 });

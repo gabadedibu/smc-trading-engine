@@ -29,7 +29,8 @@ export const useWebSocket = (): void => {
       };
 
       socket.onclose = () => {
-        const delay = Math.min(30000, 1000 * 2 ** retryRef.current);
+        const exponent = Math.min(5, retryRef.current);
+        const delay = Math.min(30000, 1000 * 2 ** exponent);
         retryRef.current += 1;
         reconnectTimer = window.setTimeout(connect, delay);
       };
