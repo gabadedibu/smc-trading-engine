@@ -60,7 +60,9 @@ export const generateSignal = (symbol: string, timeframe: string, htfCandles: Ca
     .filter((z) => (type === 'BUY' ? z.type === 'equalHigh' : z.type === 'equalLow'))
     .sort((a, b) => type === 'BUY' ? a.level - b.level : b.level - a.level);
   const takeProfit = liquidityTargets[0]?.level ?? (type === 'BUY' ? current.close * 1.01 : current.close * 0.99);
-  const rr = Math.abs((takeProfit - current.close) / (current.close - stopLoss || 1));
+  const riskDistance = Math.abs(current.close - stopLoss);
+  const rewardDistance = Math.abs(takeProfit - current.close);
+  const rr = riskDistance === 0 ? 0 : rewardDistance / riskDistance;
 
   const explanation = type === 'BUY'
     ? `Bullish protected low formed after internal liquidity sweep and BOS confirmation. HTF trend bullish. Bullish FVG respected at ${poi.poi?.bottom ?? current.close}.`

@@ -22,7 +22,7 @@ export class TradingWsServer {
       }
 
       try {
-        const payload = jwt.verify(token, secret) as jwt.JwtPayload;
+        const payload = jwt.verify(token, secret, { algorithms: ['HS256'] }) as jwt.JwtPayload;
         socket.userId = String(payload.userId);
       } catch {
         socket.close();

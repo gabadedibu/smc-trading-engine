@@ -8,13 +8,13 @@ const REFRESH_EXPIRES_IN = '7d';
 const signAccessToken = (userId: string, email: string): string => {
   const secret = process.env.JWT_SECRET;
   if (!secret) throw new Error('JWT_SECRET missing');
-  return jwt.sign({ userId, email }, secret, { expiresIn: ACCESS_EXPIRES_IN });
+  return jwt.sign({ userId, email }, secret, { expiresIn: ACCESS_EXPIRES_IN, algorithm: 'HS256' });
 };
 
 const signRefreshToken = (userId: string, email: string): string => {
   const secret = process.env.JWT_REFRESH_SECRET;
   if (!secret) throw new Error('JWT_REFRESH_SECRET missing');
-  return jwt.sign({ userId, email }, secret, { expiresIn: REFRESH_EXPIRES_IN });
+  return jwt.sign({ userId, email }, secret, { expiresIn: REFRESH_EXPIRES_IN, algorithm: 'HS256' });
 };
 
 export const authService = {
@@ -46,7 +46,7 @@ export const authService = {
     const secret = process.env.JWT_REFRESH_SECRET;
     if (!secret) throw new Error('JWT_REFRESH_SECRET missing');
 
-    const payload = jwt.verify(refreshToken, secret) as jwt.JwtPayload;
+    const payload = jwt.verify(refreshToken, secret, { algorithms: ['HS256'] }) as jwt.JwtPayload;
     const user = await prisma.user.findUnique({ where: { id: String(payload.userId) } });
     if (!user || user.refreshToken !== refreshToken) throw new Error('Invalid refresh token');
 

@@ -17,7 +17,7 @@ export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: N
   }
 
   try {
-    const payload = jwt.verify(token, secret) as jwt.JwtPayload;
+    const payload = jwt.verify(token, secret, { algorithms: ['HS256'] }) as jwt.JwtPayload;
     req.user = { userId: String(payload.userId), email: String(payload.email) };
     next();
   } catch {
