@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  password     String
+  refreshToken String?
+  createdAt    DateTime @default(now())
+  signals      Signal[]
+  trades       Trade[]
+}
+
+model Signal {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  symbol           String
+  timeframe        String
+  type             String
+  entryPrice       Float
+  stopLoss         Float
+  takeProfit       Float
+  riskRewardRatio  Float
+  confidenceScore  Int
+  structureType    String
+  htfTrend         String
+  htfConfirmed     Boolean
+  ltfConfirmed     Boolean
+  poiExplanation   String
+  tradeReason      String
+  rejectionReason  String?
+  timestamp        DateTime @default(now())
+  trade            Trade?
+}
+
+model Trade {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  signalId  String    @unique
+  signal    Signal    @relation(fields: [signalId], references: [id])
+  status    String
+  pnl       Float?
+  openedAt  DateTime  @default(now())
+  closedAt  DateTime?
+}
